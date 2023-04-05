@@ -21,4 +21,3 @@ def get_counterpick_function(hero_name: str) -> list[str]:
     counter_html_elements = soup.select('.col-6:nth-child(1) .counter-outline td:nth-child(2)')
     counter_list = [line.text for line in counter_html_elements]
     return counter_list
-

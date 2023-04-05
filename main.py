@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from asyncio import sleep
-
+from config import TOKEN
 from counter_func import get_counterpick_function
 import discord
 from discord.ext import commands
@@ -43,7 +43,6 @@ class DotaInfo(commands.Cog):
 
 bot = commands.Bot(command_prefix='/', intents=intents)
 
-TOKEN = "MTA5MTY4MTY4OTQ2NzYyOTY1OA.Gsoynj.Ni0Lk0l3yjd7IhPD7PvSyypyXxU7hr-FyDb0ug"
 
 
 async def main():
