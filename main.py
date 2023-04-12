@@ -3,6 +3,7 @@ import logging
 from asyncio import sleep
 from config import TOKEN
 from counter_func import get_counterpick_function
+from meta_func import get_meta
 import discord
 from discord.ext import commands
 
@@ -30,6 +31,21 @@ class DotaInfo(commands.Cog):
         result_line = first_line + '\n'.join(counter_list)
         await ctx.send(result_line)
 
+    @commands.command(name='meta')
+    async def get_meta(self, ctx, position: str):
+        position_list = ['mid', 'hardsup', 'carry', 'fullsup', 'offlane', '1', '2', '3', '4', '5', 'кери', 'керри',
+                         'мид', 'мидер', 'оффлейнер', 'тройка', 'пятерка', 'четверка']
+        if position.lower() not in position_list:
+            error_line = 'Пожалуйста, используйте обозначение позиций предоставленные ниже:'
+
+            await ctx.send(error_line + '\n' + ', '.join(position_list))
+        else:
+            meta_list = get_meta(position)
+            for hero in meta_list:
+                hero_name, hero_winrate = hero
+                result_line = f'Герой: {hero_name}, винрейт: {hero_winrate}'
+                await ctx.send(result_line)
+
     @commands.command(name='roshan')
     async def wait_roshan_time(self, ctx):
         await ctx.send('Таймер респавна Рошана запущен')
@@ -42,7 +58,6 @@ class DotaInfo(commands.Cog):
 
 
 bot = commands.Bot(command_prefix='/', intents=intents)
-
 
 
 async def main():

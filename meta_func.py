@@ -19,15 +19,15 @@ def get_meta(position: str) -> list[tuple[str, str]]:
     }
     response = requests.get(f'https://www.dota2protracker.com/meta', headers=header)
     soup = BeautifulSoup(response.text, 'html.parser')
-    if position.lower() == 'carry':
+    if position.lower() in ['carry', '1', 'кери', 'керри']:
         meta_html_elements = soup.select('.content-box.tabs-2')[0]
-    elif position.lower() == 'mid':
+    elif position.lower() in ['mid', '2', 'мидер', 'мид']:
         meta_html_elements = soup.select('.content-box.tabs-3')[0]
-    elif position.lower() == 'offlane':
+    elif position.lower() in ['offlane', '3', 'тройка', 'оффлейнер']:
         meta_html_elements = soup.select('.content-box.tabs-4')[0]
-    elif position.lower() == 'hardsup':
+    elif position.lower() in ['hardsup', '4', 'четверка']:
         meta_html_elements = soup.select('.content-box.tabs-5')[0]
-    elif position.lower() == 'fullsup':
+    elif position.lower() in ['fullsup', '5', 'пятерка']:
         meta_html_elements = soup.select('.content-box.tabs-6')[0]
     meta_names = meta_html_elements.select('.top-hero-head a')
     meta_win_rates = meta_html_elements.select('.green.all-wr')
