@@ -1,7 +1,11 @@
 import asyncio
 import logging
 from asyncio import sleep
+from sqlalchemy import select
+import os
 from config import TOKEN
+from data import db_session
+from data.wards import Wards
 from counter_func import get_counterpick_function
 from meta_func import get_meta
 import discord
@@ -18,13 +22,15 @@ intents.members = True
 intents.message_content = True
 dashes = ['\u2680', '\u2681', '\u2682', '\u2683', '\u2684', '\u2685']
 
+db_session.global_init("db/wards.db")
+
 
 class DotaInfo(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='get_counterpick')
+    @commands.command(name='counterpick')
     async def get_counterpick(self, ctx, hero_name: str):
         first_line = f'Контрпики для героя {hero_name}: \n'
         counter_list = get_counterpick_function(hero_name)
@@ -45,6 +51,26 @@ class DotaInfo(commands.Cog):
                 hero_name, hero_winrate = hero
                 result_line = f'Герой: {hero_name}, винрейт: {hero_winrate}'
                 await ctx.send(result_line)
+
+    @commands.command(name='wards')
+    async def get_wards_spots(self, ctx, side: str, region: str):
+        region_list = ['safe_forest', 'hard_forest']
+        if side not in ['dire', 'radiant']:
+            await ctx.send('Пожалуйста, при указании стороны используйте dire или radiant')
+        elif region not in region_list:
+            await ctx.send(f'Пожалуйста, при указании места используйте: {" или ".join(region_list)}')
+        else:
+            db_sess = db_session.create_session()
+            result = db_sess.execute(
+                select(Wards.folder_path)
+                    .where(Wards.side == side, Wards.name_of_map_piece == region)
+            )
+            wards_spots = result.one()[0]
+            ward_image_names = os.listdir(wards_spots)
+            print(ward_image_names)
+            for image in ward_image_names:
+                picture = discord.File(wards_spots + r'/' + image)
+                await ctx.send(file=picture)
 
     @commands.command(name='roshan')
     async def wait_roshan_time(self, ctx):
